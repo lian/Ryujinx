@@ -323,10 +323,25 @@ namespace Ryujinx.HLE.HOS.Services.Sockets.Sfdnsres
 
                 if (DnsBlacklist.IsHostBlocked(host))
                 {
-                    Logger.Info?.Print(LogClass.ServiceSfdnsres, $"DNS Blocked: {host}");
+                    string smm2_dns = "g22306d00-lp1.s.n.srv.nintendo.net";
+                    string smm2_faked_ip = "192.168.1.44";
 
-                    netDbErrorCode = NetDbError.HostNotFound;
-                    errno          = GaiError.NoData;
+                    if (host == smm2_dns) {
+                       Logger.Info?.Print(LogClass.ServiceSfdnsres, $"DNS Faked SMM2 Server: {host} -> {smm2_faked_ip}");
+                       try
+                       {
+                           hostEntry = DnsMitmResolver.Instance.ResolveAddress(smm2_faked_ip);
+                       }
+                       catch (SocketException exception)
+                       {
+                           netDbErrorCode = ConvertSocketErrorCodeToNetDbError(exception.ErrorCode);
+                           errno          = ConvertSocketErrorCodeToGaiError(exception.ErrorCode, errno);
+                       }
+                    } else {
+                       Logger.Info?.Print(LogClass.ServiceSfdnsres, $"DNS Blocked: {host}");
+                       netDbErrorCode = NetDbError.HostNotFound;
+                       errno          = GaiError.NoData;
+                    }
                 }
                 else
                 {
@@ -539,10 +554,25 @@ namespace Ryujinx.HLE.HOS.Services.Sockets.Sfdnsres
 
                 if (DnsBlacklist.IsHostBlocked(host))
                 {
-                    Logger.Info?.Print(LogClass.ServiceSfdnsres, $"DNS Blocked: {host}");
+                    string smm2_dns = "g22306d00-lp1.s.n.srv.nintendo.net";
+                    string smm2_faked_ip = "192.168.1.44";
 
-                    netDbErrorCode = NetDbError.HostNotFound;
-                    errno          = GaiError.NoData;
+                    if (host == smm2_dns) {
+                       Logger.Info?.Print(LogClass.ServiceSfdnsres, $"DNS Faked SMM2 Server: {host} -> {smm2_faked_ip}");
+                       try
+                       {
+                           hostEntry = DnsMitmResolver.Instance.ResolveAddress(smm2_faked_ip);
+                       }
+                       catch (SocketException exception)
+                       {
+                           netDbErrorCode = ConvertSocketErrorCodeToNetDbError(exception.ErrorCode);
+                           errno          = ConvertSocketErrorCodeToGaiError(exception.ErrorCode, errno);
+                       }
+                    } else {
+                       Logger.Info?.Print(LogClass.ServiceSfdnsres, $"DNS Blocked: {host}");
+                       netDbErrorCode = NetDbError.HostNotFound;
+                       errno          = GaiError.NoData;
+                    }
                 }
                 else
                 {
